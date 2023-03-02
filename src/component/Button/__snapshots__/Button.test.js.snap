@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button component renders correctly 1`] = `
+<button
+  className="btn-primary"
+  onClick={[Function]}
+  style={Object {}}
+>
+  Click me
+</button>
+`;
+
+exports[`Button component renders with correct className prop 1`] = `
+<button
+  className="Hello"
+  onClick={[Function]}
+  style={Object {}}
+/>
+`;
+
+exports[`Button component renders with correct text  props 1`] = `
+<button
+  className=""
+  onClick={[Function]}
+  style={Object {}}
+>
+  Click Me!
+</button>
+`;
