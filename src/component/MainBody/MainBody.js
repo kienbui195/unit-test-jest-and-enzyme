@@ -1,4 +1,5 @@
 import React from "react";
+import s from './MainBody.module.css'
 
 class MainBody extends React.Component {
     constructor(props) {
@@ -9,8 +10,8 @@ class MainBody extends React.Component {
 
     render = () => {
         return (
-            <div>
-                <input type="number" value={this.props.value} />
+            <div className={s.mainBody}>
+                <span>{this.props.value}</span>
             </div>
         )
     }

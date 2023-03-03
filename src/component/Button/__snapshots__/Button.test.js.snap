@@ -27,3 +27,5 @@ exports[`Button component renders with correct text  props 1`] = `
   Click Me!
 </button>
 `;
+
+exports[`Button component should render correctly 1`] = `ShallowWrapper {}`;

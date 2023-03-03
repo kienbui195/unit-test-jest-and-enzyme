@@ -1,0 +1,9 @@
+.mainBody {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgb(0,0,0);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border-radius: 25%;
+}

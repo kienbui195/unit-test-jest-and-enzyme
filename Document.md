@@ -47,93 +47,114 @@
 * Cài đặt: yarn add enzyme enzyme-adapter-react-16
 * Thêm config vào src/SetupTest.js:
 
-_import { configure } from 'enzyme'; import Adapter from 'enzyme-adapter-react-16'; configure({ adapter: new Adapter() })_
+```js
 
+import { configure } from 'enzyme'; 
+import Adapter from 'enzyme-adapter-react-16'; 
+configure({ adapter: new Adapter() })
+
+```
 # 3. Viết test
 
 * Tạo file <Tên component>.test.js
 * Việc test bắt đầu với <describe> block, với 2 params: đầu tiên là tên của cast test, phần thứ hai là phần muốn test
 * Từ khóa <it()> thể hiện một test case hoặc một spec; mỗi case test có một hoặc nhiều kết quả test để kiểm tra tình trạng của code
-* <expects(true).toBeTruthy()> với <toBeTruthy()> là một hàm so sánh được define sẵn. Trong jest mỗi hàm so sánh sẽ so sánh kết quả đầu ra mong muốn và kết quả thực tế và trả về boolean
+* `expects(true).toBeTruthy()` với `toBeTruthy()` là một hàm so sánh được define sẵn. Trong jest mỗi hàm so sánh sẽ so sánh kết quả đầu ra mong muốn và kết quả thực tế và trả về boolean
 * Các hàm so sánh trong Jest:
-* toBe()
-* toBeNull()
-* toBeDefined()
-* toBeUndefined()
-* toBeTruthy()
-* toBeFalsy()
-* toBeGreaterThan()
-* toBeLesserThan()
-* toMatch()
-* toContain()
+* `toBe()`
+* `toBeNull()`
+* `toBeDefined()`
+* `toBeUndefined()`
+* `toBeTruthy()`
+* `toBeFalsy()`
+* `toBeGreaterThan()`
+* `toBeLesserThan()`
+* `toMatch()`
+* `toContain()`
 
 # 4. Should Know
 
 **Xác minh giá trị của một state/props trong một component**
 
 ```js
-const wrapper = shallow(<ComponentName />);
 
+const wrapper = shallow(<ComponentName />);
 expect(wrapper.state().data).toBe('something');
 expect(wrapper.props().data).toBe('something');
+
 ```
 
 **Xác minh giá trị của thẻ**
 
 ```js
-const wrapper = shallow(<ComponentName />);
 
+const wrapper = shallow(<ComponentName />);
 expect(wrapper.find('h4').length).toBe(1);
 expect(wrapper.find('h4').at(0).text()).toBe('Something');
+
 ```
 
 **Mô phỏng sự kiện ấn nút**
 
 ```js
+
 const wrapper = shallow(<ComponentName />);
 
 expect(wrapper.state().data).toBe('state1');
 wrapper.find('button').simulate('click');
 expect(wrapper.state().data).toBe('state2');
+
 ```
 
 **Trick**
 * Xác nhận style
 ```js
+
 wrapper.find('.myClassname').get(0).style;
 expect(containerStyle).to.have.property('opacity', '1');
+
 ```
 * Xác nhận class name
+
 ```js
+
 const span = mount(<Test />).find('span');
 expect(span.html().match(/style="([^"]*)"/i)[1]).toBe('color: #000;');
+
 ```
+
 **Remark**
 * Shallow Rendering
 * Kiểm tra một component như một unit.
 
 ```js
+
 import { shallow } from 'enzyme';
 
 const wrapper = shallow(<MyComponent />);
+
 ```
 
 **Full rendering**
 * Các component có thể tương tác với API DOM hoặc có thể yêu cầu đầy đủ lifecycle để kiểm tra đầy đủ component.
 
 ```js
+
 import { mount } from 'enzyme';
 
 const wrapper = mount(<MyComponent />);
+
 ```
 
 **Static Rendering**
 * Nó được sử dụng để render components với HTML tĩnh và phân tích kết quả cấu trúc HTML
 
 ```js
+
 import { render } from 'enzyme';
 
 const wrapper = render(<MyComponent />);
+
 ```
 
 # 5. Demo
@@ -143,4 +164,277 @@ const wrapper = render(<MyComponent />);
 
 * Demo test tham khảo: (đều viết bằng cả enzyme và jest)
 [Demo](https://github.com/wahengchang/react-test-must-know/tree/master/src/__tests__)
+* Sample tham khảo: 
+[Demo2](https://viblo.asia/p/gioi-thieu-ve-jest-delightful-javascript-testing-gDVK2wWeZLj)
+
+# 6. Question
+
+* Test cần được xây dựng dựa trên test function có trong comp hoặc 1 hàm chức năng riêng biệt, không tập trung vào test UI hay test các chức năng có thể xem trực tiếp trên màn hình
+
+* Với các hàm không liên quan đến component thì không thể test bằng enzyme
+
+# 7. Document
+## 7.1. Jest
+**Basic**
+
+* `toBe()` giống so sánh `===` => `expect(sum(2,3)).toBe(5)`
+
+* `toEqual()` giống so sánh `==` => `expect(sum(2,3)).toEqual(5)`
+
+* Với các phép tính, hàm liên quan số thực, sử dụng `toBeClose()` => `expect(sum(.2,.3)).toBeClose(.5)` 
+
+* VỚi String sử dụng `toMatch()` => 
+```js
+test('there is no I in team', () => {
+  expect('team').not.toMatch(/I/);
+});
+
+test('but there is a "stop" in Christoph', () => {
+  expect('Christoph').toMatch(/stop/);
+});
+```
+
+* Kiểm tra Array có chứa giá trị hay không chứa bằng `toContain()` => 
+```js
+const shoppingList = [
+  'diapers',
+  'kleenex',
+  'trash bags',
+  'paper towels',
+  'milk',
+];
+
+test('the shopping list has milk on it', () => {
+  expect(shoppingList).toContain('milk');
+  expect(new Set(shoppingList)).toContain('milk');
+});
+```
+
+* Kiểm tra một hàm có ném đúng lỗi ra không bằng `toThrow()` => 
+```js
+function compileAndroidCode() {
+  throw new Error('you are using the wrong JDK!');
+}
+
+test('compiling android goes as expected', () => {
+  expect(() => compileAndroidCode()).toThrow();
+  expect(() => compileAndroidCode()).toThrow(Error);
+
+  // You can also use a string that must be contained in the error message or a regexp
+  expect(() => compileAndroidCode()).toThrow('you are using the wrong JDK');
+  expect(() => compileAndroidCode()).toThrow(/JDK/);
+
+  // Or you can match an exact error message using a regexp like below
+  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK$/); // Test fails
+  expect(() => compileAndroidCode()).toThrow(/^you are using the wrong JDK!$/); // Test pass
+});
+```
+
+**Testing Asynchronous Code**
+
+* Promise: một promise được trả về, jest sẽ đợi đến khi có kết quả được xử lí, nếu promise bị reject thì kết quả trả về fail
+```js
+test('the data is peanut butter', () => {
+  return fetchData().then(data => {
+    expect(data).toBe('peanut butter');
+  });
+});
+
+```
+
+* Async/Await
+```js
+test('the data is peanut butter', async () => {
+  const data = await fetchData();
+  expect(data).toBe('peanut butter');
+});
+
+test('the fetch fails with an error', async () => {
+  expect.assertions(1);
+  try {
+    await fetchData();
+  } catch (e) {
+    expect(e).toMatch('error');
+  }
+});
+```
+
+hoặc
+```js
+test('the data is peanut butter', async () => {
+  await expect(fetchData()).resolves.toBe('peanut butter');
+});
+
+test('the fetch fails with an error', async () => {
+  await expect(fetchData()).rejects.toMatch('error');
+});
+```
+
+Nếu mong muốn kết quả trả về là bị Reject thì sử dụng phương thức `.catch()`. Bảo đảm thêm `expect().assertions` để xác định số lần được gọi:
+```js
+test('the fetch fails with an error', () => {
+  expect.assertions(1);
+  return fetchData().catch(e => expect(e).toMatch('error'));
+});
+```
+
+* Callbacks [Tìm hiểu thêm tại](https://jestjs.io/docs/asynchronous)
+
+**Setup and Teardown**
+* Trước khi vào các test case cần phải có 1 số cài đặt trc và sau khi test cần có 1 số cài đặt để hoàn thành, Jest cung cấp các tính năng này.
+* Bao gồm: cấu hình lặp lại (`beforeEach()`, `afterEach()`) hoặc cấu hình một lần
+* Thứ tự chạy các hàm before/after
+
+```js
+beforeAll(() => console.log('1 - beforeAll'));
+afterAll(() => console.log('1 - afterAll'));
+beforeEach(() => console.log('1 - beforeEach'));
+afterEach(() => console.log('1 - afterEach'));
+
+test('', () => console.log('1 - test'));
+
+describe('Scoped / Nested block', () => {
+  beforeAll(() => console.log('2 - beforeAll'));
+  afterAll(() => console.log('2 - afterAll'));
+  beforeEach(() => console.log('2 - beforeEach'));
+  afterEach(() => console.log('2 - afterEach'));
+
+  test('', () => console.log('2 - test'));
+});
+
+// 1 - beforeAll
+// 1 - beforeEach
+// 1 - test
+// 1 - afterEach
+// 2 - beforeAll
+// 1 - beforeEach
+// 2 - beforeEach
+// 2 - test
+// 2 - afterEach
+// 1 - afterEach
+// 2 - afterAll
+// 1 - afterAll
+```
+* Trong 1 khối mô tả `decribe()` có thứ tự chạy các lệnh:
+
+```js
+describe('describe outer', () => {
+  console.log('describe outer-a');
+
+  describe('describe inner 1', () => {
+    console.log('describe inner 1');
+
+    test('test 1', () => console.log('test 1'));
+  });
+
+  console.log('describe outer-b');
+
+  test('test 2', () => console.log('test 2'));
+
+  describe('describe inner 2', () => {
+    console.log('describe inner 2');
+
+    test('test 3', () => console.log('test 3'));
+  });
+
+  console.log('describe outer-c');
+});
+
+// describe outer-a
+// describe inner 1
+// describe outer-b
+// describe inner 2
+// describe outer-c
+// test 1
+// test 2
+// test 3
+```
+
+* Nếu vừa có khối lệnh vừa có lệnh đơn thì sẽ có thứ tự chạy các khối lệnh:
+
+```js
+beforeEach(() => console.log('connection setup'));
+beforeEach(() => console.log('database setup'));
+
+afterEach(() => console.log('database teardown'));
+afterEach(() => console.log('connection teardown'));
+
+test('test 1', () => console.log('test 1'));
+
+describe('extra', () => {
+  beforeEach(() => console.log('extra database setup'));
+  afterEach(() => console.log('extra database teardown'));
+
+  test('test 2', () => console.log('test 2'));
+});
+
+// connection setup
+// database setup
+// test 1
+// database teardown
+// connection teardown
+
+// connection setup
+// database setup
+// extra database setup
+// test 2
+// extra database teardown
+// database teardown
+// connection teardown
+```
+
+* Lời khuyên chung: thay đổi key `test()` thành  `test.only()` nếu cần test chạy chỉ 1 lần
+
+**Mock function**
+* Tất cả mock func có 1 thuộc tính đặc biệt - `.mock`: đây là nơi lưu trữ dữ liệu về cách gọi hàm và nội dung hàm trả về
+* Có thể xác định giá trị trả về của function
+```js
+
+// The function was called exactly once
+expect(someMockFunction.mock.calls).toHaveLength(1);
+
+// The first arg of the first call to the function was 'first arg'
+expect(someMockFunction.mock.calls[0][0]).toBe('first arg');
+
+// The second arg of the first call to the function was 'second arg'
+expect(someMockFunction.mock.calls[0][1]).toBe('second arg');
+
+// The return value of the first call to the function was 'return value'
+expect(someMockFunction.mock.results[0].value).toBe('return value');
+
+```
+
+* Mock function trả về giá trị: đưa các giá trị thử nghiệm vào mã trong quá trình thử nghiệm; cũng rất hiệu quả trong mã sử dụng kiểu tiếp nối chức năng (giảm bớt sự rắc rối về hành vi trong hàm thực)
+
+```js
+const filterTestFn = jest.fn();
+
+// Make the mock return `true` for the first call,
+// and `false` for the second call
+filterTestFn.mockReturnValueOnce(true).mockReturnValueOnce(false);
+
+const result = [11, 12].filter(num => filterTestFn(num));
+
+console.log(result);
+// > [11]
+console.log(filterTestFn.mock.calls[0][0]); // 11
+console.log(filterTestFn.mock.calls[1][0]); // 12
+
+```
+
+**Mocking Modules**
+
+* 
+
+
+
+
+
+
+
+
+
+
+
+
 

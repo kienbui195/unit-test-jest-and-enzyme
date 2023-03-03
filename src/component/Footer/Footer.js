@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "../Button/Button";
-
+import s from './Footer.module.css'
 class Footer extends React.Component {
     constructor(props) {
         super(props)
@@ -14,7 +14,7 @@ class Footer extends React.Component {
 
     render = () => {
         return (
-            <div>
+            <div className={s.footer}>
                 <Button text={'Decrease'} handleClick={() => this.handleClick(false)} />
                 <Button text={'Increase'} handleClick={() => this.handleClick(true)} />
             </div>
