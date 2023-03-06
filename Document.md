@@ -424,7 +424,99 @@ console.log(filterTestFn.mock.calls[1][0]); // 12
 
 **Mocking Modules**
 
-* 
+* Giả lập module, ví dụ giả lập kết quả trả về của một call API:
+
+```js
+
+import axios from 'axios';
+import Users from './users';
+
+jest.mock('axios');
+
+test('should fetch users', () => {
+  const users = [{name: 'Bob'}];
+  const resp = {data: users};
+  axios.get.mockResolvedValue(resp);
+
+  // or you could use the following depending on your use case:
+  // axios.get.mockImplementation(() => Promise.resolve(resp))
+
+  return Users.all().then(data => expect(data).toEqual(users));
+});
+
+```
+
+**Mocking Partials**
+
+* Phương pháp này trong kiểm thử rất hữu ích khi mô-đun đang được kiểm thử có các phụ thuộc bên ngoài có thể không khả dụng hoặc không phù hợp cho việc kiểm thử, hoặc khi một số phần của mô-đun cần được sửa đổi cho mục đích kiểm thử. Bằng cách một phần giả mạo mô-đun, kiểm thử có thể kiểm soát hành vi của mô-đun trong quá trình kiểm thử mà
+
+* (Quả sample trên doc khó hiểu quá không cho vào)
+
+**Mock Implementations**
+
+* Trong trường hợp muốn giả lập giá trị trả về (do khó xác định giá trị trả về thực tế) và có khả năng thay thế hoàn toàn việc triển khai hàm giả: sd `jest.fn()`, `mockInplementationOnce`
+```js
+const myMockFn = jest.fn(cb => cb(null, true));
+
+myMockFn((err, val) => console.log(val));
+// > true
+```
+
+* phương thức `mockImplementation` hữu ích khi bạn cần xác định cài đặt của hàm giả được tạo từ module khác
+* khi cần tái tạo lại 1 hành vi phức tạp của 1 hàm giả sao cho nhiều lệnh gọi hàm tạo ra nhiều kết quả khác nhau sử dụng method `mockImplementationOnce`
+
+```js
+const myMockFn = jest
+  .fn()
+  .mockImplementationOnce(cb => cb(null, true))
+  .mockImplementationOnce(cb => cb(null, false));
+
+myMockFn((err, val) => console.log(val));
+// > true
+
+myMockFn((err, val) => console.log(val));
+// > false
+```
+
+* Khi chức năng giả lập hết các triển khai được thực hiện bởi `mockImplementationOnce`, nó sẽ thực thi tập triển khai mặc định với `jest.fn` nếu nó được xác định
+
+```js
+const myMockFn = jest
+  .fn(() => 'default')
+  .mockImplementationOnce(() => 'first call')
+  .mockImplementationOnce(() => 'second call');
+
+console.log(myMockFn(), myMockFn(), myMockFn(), myMockFn());
+// > 'first call', 'second call', 'default', 'default'
+```
+
+* Đối với trường hợp có các phương thức được xâu chuỗi => giả lập API dưới dạng hàm `mockReturnThis()`
+
+```js
+const myObj = {
+  myMethod: jest.fn().mockReturnThis(),
+};
+
+// is the same as
+
+const otherObj = {
+  myMethod: jest.fn(function () {
+    return this;
+  }),
+};
+```
+
+**Mock Name**
+* Có thể tùy ý cung cấp tên cho các chức năng mô phỏng bằng `mockName` thay vì là các `jest.fn` => nhanh chóng xác định hàm mô phỏng báo lỗi
+
+**Custom Matchers**
+* Một số hàm so khớp để làm cho việc xác nhận cách các hàm giả được gọi trở nên dễ dàng hơn: 
+1. `toHaveBeenCalled`: xác định hàm được gọi ít nhất 1 lần
+2. `toHaveBeenCalledWith(ag1, ag2)`: xác định hàm được gọi ít nhất 1 lần với các đối số chỉ định
+3. `toHaveBeenLastCalledWith(ag1, ag2)`: hàm giả định được gọi cuối cùng với các đối số chỉ định
+4. `toMatchSnapshot`: tất cả hàn gọi và tên mô phỏng được viết dưới dạng snapshot
+
+* Hoặc có thể làm thủ công với các hàm so sánh cơ bản mà không cần dùng các hàm có sẵn trên nếu muốn.
 
 
 

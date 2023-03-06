@@ -1,5 +1,9 @@
-export const getProducts = async (id) => {
-    let res =  await fetch(`https://dummyjson.com/products/${id}`)
-        .then(res => res.json())
-    return res
-} 
+import React from 'react'
+
+const Link = props => {
+    return (
+        <a href={props.link}>{props.nameLink}</a>
+    )
+}
+
+export default Link;
